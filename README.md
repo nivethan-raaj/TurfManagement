@@ -1,6 +1,7 @@
 # Turf Management System - Frontend (Next.js)
 
-This is the **Turf Management System** frontend built using **Next.js**. The project is designed for booking and managing turf reservations, and integrates authentication and authorization for user security.
+This is the **Turf Management System** frontend built using **Next.js**. The project is designed for booking and managing turf reservations, and rental of sports equipments also Tournament and Coach Booking
+
 
 ## Getting Started
 
