@@ -63,3 +63,14 @@ npm install
 ![image](https://github.com/user-attachments/assets/0f6b2596-8eee-482a-aa23-45c207077678)
 
 ![image](https://github.com/user-attachments/assets/0b429f76-6d52-4c72-8a2d-3f1fca62c430)
+
+**DARK MODE**
+![image](https://github.com/user-attachments/assets/75fa93f5-f7ee-4b29-b313-b9a480b4db35)
+
+![image](https://github.com/user-attachments/assets/be1452cc-94c5-4053-9df9-6092115cc177)
+
+![image](https://github.com/user-attachments/assets/9f66ad51-0089-4742-a2d2-9dcbbe974083)
+
+![image](https://github.com/user-attachments/assets/9852db8f-01e0-4957-be64-cd3d6cdb48dd)
+
+
