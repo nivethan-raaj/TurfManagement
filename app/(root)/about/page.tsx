@@ -164,10 +164,10 @@ export default function AboutPage() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {[
-                { name: "TEAM MEM 1", role: "Head Groundskeeper" },
-                { name: "JESIMA", role: "Turf Specialist" },
-                { name: "TEAM MEM 2", role: "Irrigation Expert" },
-                { name: "Sarah", role: "Landscape Designer" },
+                { name: "Thufail Ahamed", role: "Head Groundskeeper" },
+                { name: "Nivethan Raaj T", role: "Turf Specialist" },
+                { name: "VISHWAKANTH G", role: "Irrigation Expert" },
+                { name: "HARSHITHA S", role: "Landscape Designer" },
               ].map((member, index) => (
                 <Card key={index}>
                   <CardContent className="p-6 text-center">
