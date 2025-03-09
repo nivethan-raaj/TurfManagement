@@ -57,3 +57,9 @@ npm install
 ```
 
 3. .env.local file issuesSolution: Ensure .env.local exists in the root directory and matches the correct format.
+
+**SCREENSHOTS OF TURFMASTER:**
+
+![image](https://github.com/user-attachments/assets/0f6b2596-8eee-482a-aa23-45c207077678)
+
+![image](https://github.com/user-attachments/assets/0b429f76-6d52-4c72-8a2d-3f1fca62c430)
