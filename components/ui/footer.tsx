@@ -108,14 +108,14 @@ const Footer: React.FC = () => {
               onMouseEnter={() => setHoveredLink("email")}
               onMouseLeave={() => setHoveredLink(null)}
             >
-              jesima@gmail.com
+              nivethanraajt@gmail.com
             </a>
           </p>
           <p style={styles.contactInfo}>
             <span style={styles.contactLabel}>Support:</span> 24/7 AI-powered assistance
           </p>
           <p style={styles.contactInfo}>
-            <span style={styles.contactLabel}>Contact:</span>+91 9659459199
+            <span style={styles.contactLabel}>Contact:</span>+91 7708409636
           </p>
           <p style={styles.contactInfo}>
             <span style={styles.contactLabel}>Location:</span> India, Srilanka
