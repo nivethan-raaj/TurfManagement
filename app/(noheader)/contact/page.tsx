@@ -91,7 +91,7 @@ export default function ContactPage() {
                         Address
                       </h4>
                       <p className="mt-1 text-gray-600">
-                        405, Tirumalai Colony 5th St, P.P. CHAVADI,
+                        Shop 2, Jesima Complex, Duraisamy Nagar, Byepass Road,
                         <br />
                         Madurai, Tamil Nadu 625016
                         <br />
@@ -105,7 +105,7 @@ export default function ContactPage() {
                       <h4 className="text-lg font-medium text-gray-900">
                         Phone
                       </h4>
-                      <p className="mt-1 text-gray-600">+91 7708409636</p>
+                      <p className="mt-1 text-gray-600">+91 9659459199</p>
                     </div>
                   </div>
                   <div className="flex items-center">
@@ -114,7 +114,7 @@ export default function ContactPage() {
                       <h4 className="text-lg font-medium text-gray-900">
                         Email
                       </h4>
-                      <p className="mt-1 text-gray-600">nivethan@gmail.com</p>
+                      <p className="mt-1 text-gray-600">jesima@example.com</p>
                     </div>
                   </div>
                 </div>
