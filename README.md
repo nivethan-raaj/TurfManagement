@@ -12,15 +12,16 @@ Ensure you have the following installed before proceeding:
 - **Git**  
 
 ## Installation Steps
-
+In VS CODE TERMINAL
 1. **Clone the Repository**  
 ```bash
-git clone <repository_url>
+git clone https://github.com/nivethan-raaj/TurfManagement.git
 ```
 
-2. **Navigate to the Project Directory**  
+2. **Navigate to the Project Directory**
+after cloning it will be in the correct directory if you clone it into a folder use
 ```bash
-cd <project_directory>
+cd TurfManagement
 ```
 
 3. **Install Dependencies**  
@@ -28,30 +29,31 @@ cd <project_directory>
 npm install
 ```
 
-4. **Set Up Environment Variables**  
-Create a `.env.local` file in the project root and provide the necessary environment variables:  
-
-```
-NEXT_PUBLIC_API_BASE_URL=<your_api_base_url>
-NEXT_PUBLIC_AUTH_SECRET=<your_auth_secret>
-```
-
-5. **Run the Development Server**  
+4. **Run the Development Server**  
 ```bash
 npm run dev
 ```
 
 The application will be available at [http://localhost:3000](http://localhost:3000)
 
-## Project Structure
 
+5. **To Host**
+```bash
+npm run build
 ```
-├── components       // Reusable UI components
-├── pages             // Next.js routing system
-│   ├── index.js      // Home page
-│   ├── login.js      // Login page for authentication
-│   ├── dashboard.js  // Admin dashboard
-│   └── booking.js    // Turf booking interface
-├── public            // Static files (images, etc.)
-├── styles            // Global and modular CSS files
-├── utils             // Helper function
+generate the build file and host using netlify or github
+
+**Common Issues & Solutions**
+
+1. Error: Port 3000 is already in useSolution: Terminate any process using port 3000:
+```bash
+npx kill-port 3000
+```
+
+2. Module Not Found errorSolution: Run:
+
+```bash
+npm install
+```
+
+3. .env.local file issuesSolution: Ensure .env.local exists in the root directory and matches the correct format.
