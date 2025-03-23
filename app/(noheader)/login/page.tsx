@@ -11,8 +11,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 // Hardcoded users for demo purposes
 const USERS = [
-  { email: "nivethan@gmail.com", password: "password1", name: "Nivethan" },
-  { email: "user2@example.com", password: "password2", name: "User Two" },
+  { email: "nivethanraajt@gmail.com", password: "nivejesi123", name: "Nivethan Raaj" },
+  { email: "jesimaparveen582@gmail.com", password: "jesinive123", name: "Jesima Parveen" },
+  { email: "keerthichandran2004@gmail.com", password: "keerthi123", name: "Keerthi Chandran" },
+  { email: "kamalichandran2002@gmail.com", password: "kamali123", name: "Kamali Chandran" },
 ];
 
 export default function LoginPage() {
@@ -182,9 +184,6 @@ export default function LoginPage() {
           </p>
 
           <div className="mt-4 text-center text-sm text-gray-500">
-            <p>Demo accounts:</p>
-            <p>Email: user1@example.com / Password: password1</p>
-            <p>Email: user2@example.com / Password: password2</p>
           </div>
         </div>
       </div>
