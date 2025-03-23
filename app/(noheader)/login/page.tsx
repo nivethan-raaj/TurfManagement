@@ -1,12 +1,61 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import type React from "react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+// Hardcoded users for demo purposes
+const USERS = [
+  { email: "user1@example.com", password: "password1", name: "User One" },
+  { email: "user2@example.com", password: "password2", name: "User Two" },
+];
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const router = useRouter();
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      router.push("/book");
+    }
+  }, [router]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    // Check if user exists
+    const user = USERS.find(
+      (user) => user.email === email && user.password === password
+    );
+
+    if (user) {
+      // Store user info in localStorage
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          email: user.email,
+          name: user.name,
+        })
+      );
+
+      // Redirect to book page
+      router.push("/book");
+    } else {
+      setError("Invalid email or password");
+    }
+  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -37,7 +86,12 @@ export default function LoginPage() {
               Please sign in to your account
             </p>
           </div>
-          <form className="mt-8 space-y-6">
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-4">
               <div>
                 <Label htmlFor="email">Email address</Label>
@@ -49,6 +103,8 @@ export default function LoginPage() {
                   required
                   className="mt-1"
                   placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div>
@@ -62,6 +118,8 @@ export default function LoginPage() {
                     required
                     className="pr-10"
                     placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   <button
                     type="button"
@@ -85,6 +143,8 @@ export default function LoginPage() {
                   name="remember-me"
                   type="checkbox"
                   className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
                 />
                 <label
                   htmlFor="remember-me"
@@ -120,6 +180,12 @@ export default function LoginPage() {
               Sign up
             </a>
           </p>
+
+          <div className="mt-4 text-center text-sm text-gray-500">
+            <p>Demo accounts:</p>
+            <p>Email: user1@example.com / Password: password1</p>
+            <p>Email: user2@example.com / Password: password2</p>
+          </div>
         </div>
       </div>
     </div>

@@ -1,6 +1,5 @@
 "use client";
-import { useRef } from "react";
-import { useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -10,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, LogIn, User, LogOut, Clock } from "lucide-react";
 import { ModeToggle } from "./moodToggle";
 import { cn } from "@/lib/utils";
 import {
@@ -23,11 +22,29 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import * as React from "react";
-import { LogIn } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export default function HeaderNavBar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState<{ name: string; email: string } | null>(
+    null
+  );
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check if user is logged in
+    const storedUser = localStorage.getItem("user");
+
+    // Check if the stored user exists and is a valid JSON string
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser)); // Only parse if valid
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+      }
+    }
+  }, []);
 
   const navItems = [
     { name: "Home", href: "/" },
@@ -82,10 +99,21 @@ export default function HeaderNavBar() {
     },
   ];
   const [isAnimating, setIsAnimating] = useState(false);
-  const router = useRouter();
+
   const handleLogin = () => {
     router.push("/login");
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+    router.push("/");
+  };
+
+  const handleBookingHistory = () => {
+    router.push("/booking-history");
+  };
+
   return (
     <main style={{ paddingTop: "90px" }}>
       <header className="bg-slate-200 shadow-sm fixed top-0 w-full z-50 dark:bg-[#26284c] py-3">
@@ -188,13 +216,44 @@ export default function HeaderNavBar() {
             </div>
             <div className="flex items-center"></div>
             <div className="flex items-center">
-              <button
-                className="btn relative mx-10 px-10 py-2 text-black cursor-pointer z-0 rounded-lg flex flex-row items-center justify-between"
-                onClick={handleLogin}
-              >
-                <LogIn className="mr-2 h-4 w-4" />
-                Log In
-              </button>
+              {user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="relative h-8 w-8 rounded-full"
+                    >
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback className="bg-primary text-white">
+                          {user.name.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem className="font-medium">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>{user.name}</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleBookingHistory}>
+                      <Clock className="mr-2 h-4 w-4" />
+                      Booking History
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleLogout}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <button
+                  className="btn relative mx-10 px-10 py-2 text-black cursor-pointer z-0 rounded-lg flex flex-row items-center justify-between"
+                  onClick={handleLogin}
+                >
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Log In
+                </button>
+              )}
             </div>
             <div className="flex items-center sm:hidden">
               <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -249,9 +308,38 @@ export default function HeaderNavBar() {
                         )}
                       </div>
                       <div className="flex flex-col items-start gap-4">
-                        <Button onClick={() => setIsOpen(false)} size="sm">
-                          <Link href="/login">Log In</Link>
-                        </Button>
+                        {user ? (
+                          <>
+                            <div className="px-3 py-2 text-base font-semibold">
+                              {user.name}
+                            </div>
+                            <Button
+                              onClick={handleBookingHistory}
+                              size="sm"
+                              className="ml-3"
+                            >
+                              Booking History
+                            </Button>
+                            <Button
+                              onClick={handleLogout}
+                              size="sm"
+                              variant="outline"
+                              className="ml-3"
+                            >
+                              Logout
+                            </Button>
+                          </>
+                        ) : (
+                          <Button
+                            onClick={() => {
+                              setIsOpen(false);
+                              router.push("/login");
+                            }}
+                            size="sm"
+                          >
+                            Log In
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </div>

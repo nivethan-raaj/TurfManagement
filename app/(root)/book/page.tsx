@@ -1,29 +1,65 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Slider } from "@/components/ui/slider"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, ThumbsUp, ArrowRight, SlidersHorizontal, Star, MapPin, Clock } from "lucide-react"
-import { turfs } from "./turf"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Search,
+  ThumbsUp,
+  ArrowRight,
+  SlidersHorizontal,
+  Star,
+  MapPin,
+  Clock,
+} from "lucide-react";
+import { turfs } from "./turf";
+import BookingModal from "@/components/ui/booking-modal";
+import { useRouter } from "next/navigation";
+import type { Booking } from "@/types/booking";
 
 export default function BookATurfPage() {
-  const [priceRange, setPriceRange] = useState([0, 2000])
-  const [isSidePanelOpen, setIsSidePanelOpen] = useState(false)
-  const [filteredTurfs, setFilteredTurfs] = useState(turfs)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([])
-  const [selectedSize, setSelectedSize] = useState("any")
-  const [sortOption, setSortOption] = useState("")
+  const [priceRange, setPriceRange] = useState([0, 2000]);
+  const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
+  const [filteredTurfs, setFilteredTurfs] = useState(turfs);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedSize, setSelectedSize] = useState("any");
+  const [sortOption, setSortOption] = useState("");
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [selectedTurf, setSelectedTurf] = useState<(typeof turfs)[0] | null>(
+    null
+  );
+  const [user, setUser] = useState<{ name: string; email: string } | null>(
+    null
+  );
+  const router = useRouter();
 
-  const turfsPerPage = 9
+  const turfsPerPage = 9;
 
   useEffect(() => {
-    let result = turfs
+    // Check if user is logged in
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    } else {
+      // Redirect to login if not logged in
+      router.push("/login");
+    }
+  }, [router]);
+
+  useEffect(() => {
+    let result = turfs;
 
     // Filter by search term
     if (searchTerm) {
@@ -31,66 +67,120 @@ export default function BookATurfPage() {
         (turf) =>
           turf.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           turf.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          turf.location.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
+          turf.location.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     }
 
     // Filter by price range
-    result = result.filter((turf) => turf.price >= priceRange[0] && turf.price <= priceRange[1])
+    result = result.filter(
+      (turf) => turf.price >= priceRange[0] && turf.price <= priceRange[1]
+    );
 
     // Filter by selected types
     if (selectedTypes.length > 0) {
-      result = result.filter((turf) => selectedTypes.includes(turf.type))
+      result = result.filter((turf) => selectedTypes.includes(turf.type));
     }
 
     // Filter by size
     if (selectedSize !== "any") {
-      result = result.filter((turf) => turf.size.toLowerCase() === selectedSize.toLowerCase())
+      result = result.filter(
+        (turf) => turf.size.toLowerCase() === selectedSize.toLowerCase()
+      );
     }
 
     // Sort results
     if (sortOption) {
       switch (sortOption) {
         case "price-asc":
-          result = [...result].sort((a, b) => a.price - b.price)
-          break
+          result = [...result].sort((a, b) => a.price - b.price);
+          break;
         case "price-desc":
-          result = [...result].sort((a, b) => b.price - a.price)
-          break
+          result = [...result].sort((a, b) => b.price - a.price);
+          break;
         case "name-asc":
-          result = [...result].sort((a, b) => a.name.localeCompare(b.name))
-          break
+          result = [...result].sort((a, b) => a.name.localeCompare(b.name));
+          break;
         case "name-desc":
-          result = [...result].sort((a, b) => b.name.localeCompare(a.name))
-          break
+          result = [...result].sort((a, b) => b.name.localeCompare(a.name));
+          break;
         case "rating-desc":
-          result = [...result].sort((a, b) => b.rating - a.rating)
-          break
+          result = [...result].sort((a, b) => b.rating - a.rating);
+          break;
       }
     }
 
-    setFilteredTurfs(result)
-    setCurrentPage(1) // Reset to first page when filters change
-  }, [searchTerm, priceRange, selectedTypes, selectedSize, sortOption])
+    setFilteredTurfs(result);
+    setCurrentPage(1); // Reset to first page when filters change
+  }, [searchTerm, priceRange, selectedTypes, selectedSize, sortOption]);
 
-  const indexOfLastTurf = currentPage * turfsPerPage
-  const indexOfFirstTurf = indexOfLastTurf - turfsPerPage
-  const currentTurfs = filteredTurfs.slice(indexOfFirstTurf, indexOfLastTurf)
-  const totalPages = Math.ceil(filteredTurfs.length / turfsPerPage)
+  const indexOfLastTurf = currentPage * turfsPerPage;
+  const indexOfFirstTurf = indexOfLastTurf - turfsPerPage;
+  const currentTurfs = filteredTurfs.slice(indexOfFirstTurf, indexOfLastTurf);
+  const totalPages = Math.ceil(filteredTurfs.length / turfsPerPage);
 
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber)
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   const toggleSidePanel = () => {
-    setIsSidePanelOpen(!isSidePanelOpen)
-  }
+    setIsSidePanelOpen(!isSidePanelOpen);
+  };
 
   const handleTypeChange = (type: string) => {
-    setSelectedTypes((prev) => (prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]))
-  }
+    setSelectedTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    );
+  };
 
   const applyFilters = () => {
     // Filters are applied automatically through useEffect
-  }
+  };
+
+  const handleBookNow = (turf: (typeof turfs)[0]) => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    setSelectedTurf(turf);
+    setIsBookingModalOpen(true);
+  };
+
+  const handleBookingSubmit = (bookingData: Omit<Booking, "id" | "status">) => {
+    if (!user || !selectedTurf) return;
+
+    // Create a new booking
+    const newBooking: Booking = {
+      id: Date.now().toString(),
+      turfId: selectedTurf.id,
+      turfName: selectedTurf.name,
+      turfType: selectedTurf.type,
+      turfLocation: selectedTurf.location,
+      price: selectedTurf.price,
+      date: bookingData.date,
+      startTime: bookingData.startTime,
+      endTime: bookingData.endTime,
+      numberOfPeople: bookingData.numberOfPeople,
+      notes: bookingData.notes,
+      userEmail: user.email,
+      userName: user.name,
+      status: "confirmed",
+      createdAt: new Date().toISOString(),
+    };
+
+    // Get existing bookings from localStorage
+    const existingBookings = JSON.parse(
+      localStorage.getItem("bookings") || "[]"
+    );
+
+    // Add new booking
+    const updatedBookings = [...existingBookings, newBooking];
+
+    // Save to localStorage
+    localStorage.setItem("bookings", JSON.stringify(updatedBookings));
+
+    // Close modal and reset selected turf
+    setIsBookingModalOpen(false);
+    setSelectedTurf(null);
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -98,7 +188,9 @@ export default function BookATurfPage() {
         <section className="bg-gradient-to-r from-green-500 to-blue-600 text-white py-20">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-4xl font-bold mb-4">Book Your Perfect Turf</h1>
-            <p className="text-xl mb-8">Find and reserve the ideal turf for your sport or event</p>
+            <p className="text-xl mb-8">
+              Find and reserve the ideal turf for your sport or event
+            </p>
             <div className="max-w-3xl mx-auto flex items-center bg-white rounded-lg overflow-hidden shadow-lg">
               <Input
                 type="text"
@@ -117,7 +209,11 @@ export default function BookATurfPage() {
         <section className="py-16">
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row gap-8">
-              <aside className={`w-full md:w-64 space-y-6 ${isSidePanelOpen ? "block" : "hidden md:block"}`}>
+              <aside
+                className={`w-full md:w-64 space-y-6 ${
+                  isSidePanelOpen ? "block" : "hidden md:block"
+                }`}
+              >
                 <Card>
                   <CardHeader>
                     <CardTitle>Filters</CardTitle>
@@ -130,11 +226,19 @@ export default function BookATurfPage() {
                           <SelectValue placeholder="Select" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="price-asc">Price: Low to High</SelectItem>
-                          <SelectItem value="price-desc">Price: High to Low</SelectItem>
+                          <SelectItem value="price-asc">
+                            Price: Low to High
+                          </SelectItem>
+                          <SelectItem value="price-desc">
+                            Price: High to Low
+                          </SelectItem>
                           <SelectItem value="name-asc">Name: A to Z</SelectItem>
-                          <SelectItem value="name-desc">Name: Z to A</SelectItem>
-                          <SelectItem value="rating-desc">Highest Rated</SelectItem>
+                          <SelectItem value="name-desc">
+                            Name: Z to A
+                          </SelectItem>
+                          <SelectItem value="rating-desc">
+                            Highest Rated
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -156,7 +260,9 @@ export default function BookATurfPage() {
                     <div>
                       <label className="text-sm font-medium">Sport Type</label>
                       <div className="space-y-2 mt-2">
-                        {Array.from(new Set(turfs.map((turf) => turf.type))).map((type) => (
+                        {Array.from(
+                          new Set(turfs.map((turf) => turf.type))
+                        ).map((type) => (
                           <div key={type} className="flex items-center">
                             <Checkbox
                               id={type}
@@ -172,7 +278,10 @@ export default function BookATurfPage() {
                     </div>
                     <div>
                       <label className="text-sm font-medium">Turf Size</label>
-                      <Select value={selectedSize} onValueChange={setSelectedSize}>
+                      <Select
+                        value={selectedSize}
+                        onValueChange={setSelectedSize}
+                      >
                         <SelectTrigger className="w-full mt-2">
                           <SelectValue placeholder="Any" />
                         </SelectTrigger>
@@ -194,7 +303,11 @@ export default function BookATurfPage() {
               <div className="flex-grow space-y-6">
                 <div className="flex justify-between items-center">
                   <h2 className="text-2xl font-bold">Available Turfs</h2>
-                  <Button variant="outline" className="md:hidden" onClick={toggleSidePanel}>
+                  <Button
+                    variant="outline"
+                    className="md:hidden"
+                    onClick={toggleSidePanel}
+                  >
                     <SlidersHorizontal className="mr-2 h-4 w-4" /> Filters
                   </Button>
                 </div>
@@ -202,22 +315,30 @@ export default function BookATurfPage() {
                 {filteredTurfs.length === 0 ? (
                   <div className="text-center py-10">
                     <p className="text-lg text-gray-500">
-                      No turfs match your current filters. Try adjusting your search criteria.
+                      No turfs match your current filters. Try adjusting your
+                      search criteria.
                     </p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {currentTurfs.map((turf) => (
-                      <Card key={turf.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                      <Card
+                        key={turf.id}
+                        className="overflow-hidden hover:shadow-lg transition-shadow"
+                      >
                         <img
                           src={
-                            turf.image !== "" ? turf.image : `/placeholder.svg?height=200&width=400&text=${turf.name}`
+                            turf.image !== ""
+                              ? turf.image
+                              : `/placeholder.svg?height=200&width=400&text=${turf.name}`
                           }
                           alt={turf.name}
                           className="w-full h-48 object-cover"
                         />
                         <CardContent className="p-4">
-                          <h3 className="text-xl font-semibold mb-2">{turf.name}</h3>
+                          <h3 className="text-xl font-semibold mb-2">
+                            {turf.name}
+                          </h3>
                           <div className="flex items-center text-gray-600 mb-2">
                             <MapPin className="h-4 w-4 mr-1" />
                             <p className="text-sm">{turf.location}</p>
@@ -230,7 +351,9 @@ export default function BookATurfPage() {
                               <Star
                                 key={i}
                                 className={`h-4 w-4 ${
-                                  i < Math.floor(turf.rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                                  i < Math.floor(turf.rating)
+                                    ? "text-yellow-400 fill-yellow-400"
+                                    : "text-gray-300"
                                 }`}
                               />
                             ))}
@@ -241,8 +364,12 @@ export default function BookATurfPage() {
                             <p className="text-sm">{turf.availableHours}</p>
                           </div>
                           <div className="flex justify-between items-center">
-                            <span className="text-lg font-bold">Rs.{turf.price}/hour</span>
-                            <Button>Book Now</Button>
+                            <span className="text-lg font-bold">
+                              Rs.{turf.price}/hour
+                            </span>
+                            <Button onClick={() => handleBookNow(turf)}>
+                              Book Now
+                            </Button>
                           </div>
                         </CardContent>
                       </Card>
@@ -278,9 +405,12 @@ export default function BookATurfPage() {
 
         <section className="bg-primary text-white py-16">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-4">Ready to Book Your Turf?</h2>
+            <h2 className="text-3xl font-bold mb-4">
+              Ready to Book Your Turf?
+            </h2>
             <p className="text-xl mb-8">
-              Our booking specialists are here to help you find the perfect turf for your needs.
+              Our booking specialists are here to help you find the perfect turf
+              for your needs.
             </p>
             <Button size="lg" variant="secondary">
               Contact Us <ArrowRight className="ml-2 h-4 w-4" />
@@ -290,7 +420,9 @@ export default function BookATurfPage() {
 
         <section className="py-16">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-8 text-center">What Our Customers Say</h2>
+            <h2 className="text-3xl font-bold mb-8 text-center">
+              What Our Customers Say
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                 {
@@ -318,7 +450,19 @@ export default function BookATurfPage() {
           </div>
         </section>
       </main>
-    </div>
-  )
-}
 
+      {/* Booking Modal */}
+      {selectedTurf && (
+        <BookingModal
+          isOpen={isBookingModalOpen}
+          onClose={() => {
+            setIsBookingModalOpen(false);
+            setSelectedTurf(null);
+          }}
+          turf={selectedTurf}
+          onSubmit={handleBookingSubmit}
+        />
+      )}
+    </div>
+  );
+}
