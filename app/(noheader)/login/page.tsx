@@ -11,7 +11,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 // Hardcoded users for demo purposes
 const USERS = [
-  { email: "nivethan@gmail.com", password: "password1", name: "User One" },
+  { email: "nivethan@gmail.com", password: "password1", name: "Nivethan" },
   { email: "user2@example.com", password: "password2", name: "User Two" },
 ];
 
